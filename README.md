@@ -16,3 +16,8 @@ Tôi muốn học về phần mềm mã nguồn mở vì đây là một lĩnh v
 3. **LibreOffice** — bộ ứng dụng văn phòng mã nguồn mở.
 4. **GIMP** — phần mềm chỉnh sửa hình ảnh.
 5. **7-Zip** — phần mềm nén và giải nén tệp.
+
+## Giấy phép
+Mã nguồn trong kho này được phát hành
+theo [Giấy phép MIT](LICENSE).
+SPDX-License-Identifier: MIT
