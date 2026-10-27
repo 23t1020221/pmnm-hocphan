@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng ký tài khoản</title>
+</head>
+<body>
+    <h2>Đăng ký tài khoản</h2>
+
+    {% from "macros.html" import render_field %}
+
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <p style="color: green;">{{ message }}</p>
+        {% endfor %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('register') }}">
+        {{ form.hidden_tag() }}
+
+        {{ render_field(form.username) }}
+        {{ render_field(form.email) }}
+        {{ render_field(form.password) }}
+        {{ render_field(form.confirm_password) }}
+        {{ render_field(form.terms) }}
+
+        {{ form.submit() }}
+    </form>
+
+    <p>
+        Đã có tài khoản?
+        <a href="{{ url_for('login') }}">Đăng nhập</a>
+    </p>
+</body>
+</html>
