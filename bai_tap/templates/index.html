@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang chủ</title>
+   
+</head>
+<body>
+    <h1>Trang Chủ</h1>
+
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <p class="flash">{{ message }}</p>
+        {% endfor %}
+    {% endwith %}
+
+    <p>Tổng số sinh viên: {{ tong_sv }} </p>
+    <p> Tổng số lớp: {{ tong_lop }}</p>
+
+    {% if session.get('user') %}
+        <p>Xin chào <strong>{{ session.get('user') }}</strong>!</p>
+    {% endif %}
+
+    <div class="menu">
+        <button><a href="{{ url_for('index') }}">Trang chủ</a></button>
+         <hr>
+        <button><a href="{{ url_for('students') }}">Danh sách sinh viên</a></button>
+        <hr>
+        <button><a href="{{ url_for('cal') }}">Máy tính</a></button>
+        <hr>
+        <button><a href="{{ url_for('hp') }}">Học phần</a></button>
+        <hr>
+        <button><a href="{{ url_for('chiso') }}">Tính BMI</a></button>
+    </div>
+
+    <h3>Tài khoản</h3>
+    <div class="menu">
+        {% if session.get('user') %}
+            <a class="btn phu" href="{{ url_for('profile') }}">Trang cá nhân</a>
+            <hr>
+            <a class="btn nguy" href="{{ url_for('logout') }}">Đăng xuất</a>
+        {% else %}
+            <a class="btn phu" href="{{ url_for('login') }}">Đăng nhập</a>
+            <hr>
+            <a class="btn phu" href="{{ url_for('register') }}">Đăng ký</a>
+        {% endif %}
+    </div>
+</body>
+</html>

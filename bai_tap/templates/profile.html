@@ -1,0 +1,22 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang cá nhân</title>
+</head>
+<body>
+    <h1>Thông tin cá nhân</h1>
+
+    <p>
+        Tên đăng nhập:
+        <strong>{{ username }}</strong>
+    </p>
+
+    <p>Bạn đã đăng nhập thành công!</p>
+
+    <a href="{{ url_for('index') }}">Về trang chủ</a>
+    <br>
+    <a href="{{ url_for('logout') }}">Đăng xuất</a>
+</body>
+</html>
