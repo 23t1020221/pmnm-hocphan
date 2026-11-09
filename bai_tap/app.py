@@ -5,10 +5,80 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import (
     DataRequired, Length, Regexp, Email, EqualTo
 )
+#ket noi sql
+from flask_sqlalchemy import SQLAlchemy 
+from sqlalchemy import String, func
+from sqlalchemy.orm import DeclarativeBase , Mapped , mapped_column 
+
+class Base(DeclarativeBase):        #(1)
+    pass
+
+db = SQLAlchemy(model_class=Base)   # (2)
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "my_secret_key"
 
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///qlsv.db"             # (3)
+db.init_app(app)                    # (4)
+
+
+#sql CHƯƠNG 6
+class Students(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    mssv: Mapped[str] = mapped_column(String(10), unique=True)
+    name: Mapped[str] = mapped_column (String(100))
+    gpa: Mapped[float] = mapped_column(default=0.0)
+
+with app.app_context():
+    db.create_all()
+
+@app.get("/them-mau")
+def add_sample():
+    total = db.session.scalar(db.select(func.count(Students.id)))
+    if total > 0:
+        return f"Đã có {total} sinh viên, không thêm nữa."
+    an = Students(mssv = "23T1020001",
+                  name = "Nguyễn Văn An",
+                  gpa = 8.5)
+    before = an.id  # chua ghi xuong csdl
+    db.session.add(an) #dua vao "giỏ" chờ ghi
+    db.session.add_all([
+        Students(mssv="23T1020002", name="Trần Thị Bình", gpa=6.8),
+        Students(mssv="23T1020003", name="Lê Hoàng Cường", gpa=9.1),
+        Students(mssv="23T1020004", name="Phạm Minh Dũng",gpa=4.5),
+        Students(mssv="23T1020005", name="Hoàng Thu Hà", gpa =7.4),
+    ])
+    db.session.commit()         #ghi thật sự
+    return (f"Đã thêm 5 sinh viên, id của An: "
+           f"trước commit = {before}, "
+            f"sau commit = {an.id}")
+
+#doc du lieu bang viewfunction
+@app.get("/thu-truy-van")
+def try_queries():
+    if db.session.scalar(db.select(func.count(Students.id))) == 0:
+        return "Chưa có dữ liệu, hãy mở /them-mau trước."
+    lines = []
+    lines.append(f"1. get(3): {db.session.get(Students, 3)}")
+    lines.append(f"2. get(99): {db.session.get(Students, 99)}")
+    everyone = db.session.execute(db.select(Students)).scalars().all()
+    lines.append(f"3. Tất cả: {len(everyone)} sinh viên")
+    stmt = (db.select(Students)
+            .where(Students.gpa >= 8)
+            .order_by(Students.gpa.desc()))
+    good = db.session.execute(stmt).scalars().all()
+    lines.append(f"4. Điểm >= 8 : {good}")
+    binh = db.session.scalar(db.select(Students).filter_by(mssv="23T1020002"))
+    lines.append(f"5. MSSV 23T1020002: {binh}")
+    count = db.session.scalar(db.select(func.count(Students.id)))
+    avg = db.session.scalar(db.select(func.avg(Students.gpa)))
+    lines.append(f"6. Số SV: {count}, điểm TB: {avg:.2f}")
+    return "<br>".join(lines)
+
+@app.route("/dssv")
+def hienthi_dssv():
+    return render_template("/qlsv.html", students=db.session.execute(db.select(Students)).scalars().all())
+###
 
 
 @app.route("/")
